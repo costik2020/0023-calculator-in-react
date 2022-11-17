@@ -7,8 +7,9 @@ class Calculator extends React.Component{
         this.state = {
             upperScreenValue: "0",
             lowerScreenValue: "0",
-            total: 0,
-            lastOperand: null
+            firstOperand: 0,
+            secondOperand: 0,
+            lastOperator: null
         }; 
 
    this.handleButtonPress= this.handleButtonPress.bind(this); 
@@ -122,7 +123,7 @@ handleLowerDisplay(e){
                 (e.target.textContent !== "*") &&
                 (e.target.textContent !== "/") ) {
                 console.log("here you didn't press operand'")
-                if (this.state.lastOperand === this.state.lowerScreenValue){
+                if (this.state.lastOperator === this.state.lowerScreenValue){
                     return {
                         lowerScreenValue: e.target.textContent
                     }
@@ -132,10 +133,12 @@ handleLowerDisplay(e){
                     lowerScreenValue: state.lowerScreenValue.concat(e.target.textContent)
                    }; 
             } else {
-                
+               // You pressed an operator  
+                console.log("You pressed and operator like +-*/");
+                this.calculateTotal(this.state.firstOperand, e.target.textContent, this.state.lowerScreenValue);
                 return { 
                     lowerScreenValue:  e.target.textContent,
-                    lastOperand: e.target.textContent 
+                    lastOperator: e.target.textContent 
                    }; 
             }
 
@@ -152,18 +155,46 @@ handleLowerDisplay(e){
 
 
 
-handleButtonPress(e){
-    console.log("foo");
-    this.handleUpperDisplay(e);
-    this.handleLowerDisplay(e);
-}
-
-
-   calculateTotal (){
-    if (this.state.total == 0){
-        
+    handleButtonPress(e){
+        this.handleUpperDisplay(e);
+        this.handleLowerDisplay(e);
     }
-   }
+
+
+    calculateTotal (firstOperand, operator, secondOperand){
+        firstOperand = parseInt(firstOperand);
+        secondOperand = parseInt(secondOperand);
+        let total = 0;
+        
+        console.log("firstOperand=", firstOperand);
+        console.log("secondOperand=", secondOperand);
+
+        switch (operator){
+            case "+":
+                total = firstOperand + secondOperand;
+                break;
+
+            case "-":
+                total = firstOperand - secondOperand;
+                break;   
+
+
+            case "*":
+                total = firstOperand * secondOperand;
+                break;
+
+            case "/":
+                total = firstOperand / secondOperand;
+                break;   
+        }
+   
+    this.setState ((state)=>{
+    return {
+        firstOperand: total
+    }
+    }  );
+
+    }
 
 
 
