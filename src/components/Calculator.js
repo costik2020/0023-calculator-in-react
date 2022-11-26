@@ -8,8 +8,12 @@ class Calculator extends React.Component{
             upperScreenValue: "0",
             lowerScreenValue: "0",
             firstOperand: 0,
+            currentOperand: "",
             secondOperand: 0,
-            lastOperator: null
+            lastOperator: null,
+            countOperators: 0,
+            arrayOfExpresion: [],
+            arrayIndex: 0
         }; 
 
    this.handleButtonPress= this.handleButtonPress.bind(this); 
@@ -17,42 +21,12 @@ class Calculator extends React.Component{
    this.calculateTotal= this.calculateTotal.bind(this); 
    this.handleUpperDisplay= this.handleUpperDisplay.bind(this); 
    this.handleLowerDisplay= this.handleLowerDisplay.bind(this);
+   this.displayTotal= this.displayTotal.bind(this);
 
 
     }
 
-   ffffffffffhandleButtonPress (e){
-        // this.setState({input: event.target.value}); 
-        console.log("You clicked ",e.target.textContent);
-        // this.setState( {upperScreenValue: e.target.value  } );
-        this.setState( (state)=>{
-            //console.log("state=", state);
-            // console.log(e.target.textContent);
-        
-            // Handle the edge case where multiple dots .. are not alowed in a number
-            if( (e.target.textContent===".") && (state.upperScreenValue.indexOf(".") != -1) ){
-                return state;
-            }
 
-
-            if (state.upperScreenValue === "0"){
-                return {
-                    upperScreenValue: e.target.textContent,
-                    lowerScreenValue: e.target.textContent
-                }
-
-            } else {
-
-                return {
-                    upperScreenValue: state.upperScreenValue.concat(e.target.textContent),
-                    lowerScreenValue: e.target.textContent
-                }
-            }
-
-
-            // console.log("state=", state);
-        });
-    }
 
     handleClearPress (){
         this.setState((state)=>{
@@ -69,77 +43,171 @@ handleUpperDisplay(e){
         // this.setState({input: event.target.value}); 
         // console.log("You clicked ",e.target.textContent);
         // this.setState( {upperScreenValue: e.target.value  } );
-        this.setState( (state)=>{
             //console.log("state=", state);
             // console.log(e.target.textContent);
         
             // Handle the edge case where multiple dots .. are not alowed in a number
-            if( (e.target.textContent===".") && (state.upperScreenValue.indexOf(".") != -1) ){
-                return state;
+            if( (e.target.textContent===".") && (this.state.upperScreenValue.indexOf(".") !== -1) ){
+                this.setState((state)=>{ return state  });
             }
 
 
-            if (state.upperScreenValue === "0"){
-                return {
-                    upperScreenValue: e.target.textContent,
-                }
+            if (this.state.upperScreenValue === "0"){
+
+               // this.setState ((state)=>{ return state }  );
+               this.setState ((state)=>{ return { upperScreenValue: e.target.textContent  } }  );
 
             } else {
 
-                return {
+             this.setState ((state)=>{ 
+               return {
                     upperScreenValue: state.upperScreenValue.concat(e.target.textContent),
-                }
+                } 
+             }  );
+            
             }
 
 
             // console.log("state=", state);
-        });
     }
 
     
 
 handleLowerDisplay(e){
         // this.setState({input: event.target.value}); 
-        console.log("You clicked ",e.target.textContent);
+       // console.log("You clicked ",e.target.textContent);
         // this.setState( {upperScreenValue: e.target.value  } );
-        this.setState( (state)=>{
             //console.log("state=", state);
             // console.log(e.target.textContent);
         
             // Handle the edge case where multiple dots .. are not alowed in a number
-            if( (e.target.textContent===".") && (state.lowerScreenValue.indexOf(".") != -1) ){
-                return state;
+            if( (e.target.textContent === ".") && (this.state.lowerScreenValue.indexOf(".") !== -1) ){
+
+               // this.setState ((state)=>{ return state }  );
+               this.setState ((state)=>{ return state }  );
+
             }
 
+            // This code handles the initial state of zero when the calculator starts
+            //  This is the first operand in the series of calculations
+            if (this.state.lowerScreenValue === "0"){
+                this.setState ((state)=>{
+                    return {
+                        lowerScreenValue: e.target.textContent,
+                        currentOperand: e.target.textContent,
+                        countOperators: 0
+                    }
 
-            if (state.lowerScreenValue === "0"){
-                return {
-                    lowerScreenValue: e.target.textContent
-                }
+
+                }  );
+
 
             } else if( (e.target.textContent !== "=") &&
                 (e.target.textContent !== "+") &&
                 (e.target.textContent !== "-") &&
                 (e.target.textContent !== "*") &&
                 (e.target.textContent !== "/") ) {
-                console.log("here you didn't press operand'")
-                if (this.state.lastOperator === this.state.lowerScreenValue){
-                    return {
-                        lowerScreenValue: e.target.textContent
-                    }
-                }
-                    return {
+                // At this point means that the user pressed only numbers or dot
+                
+                // if the lower screen has an operator
+                // then overwrite it 
+                // else just concatenate number to the lowerscreen 
+                //
+                
+
+                if ( (this.state.lowerScreenValue === "=") ||
+                ( this.state.lowerScreenValue === "+") ||
+                ( this.state.lowerScreenValue === "-") ||
+                ( this.state.lowerScreenValue === "*") ||
+                ( this.state.lowerScreenValue === "/") ) {
                     
-                    lowerScreenValue: state.lowerScreenValue.concat(e.target.textContent)
-                   }; 
+                    this.setState((state)=>{
+                        return {
+                            lowerScreenValue: e.target.textContent,
+                            currentOperand: e.target.textContent,
+                            countOperators: 0
+                        }
+                    });
+                } else {
+
+               // console.log("here you didn't press an operator")
+
+
+
+                // Add the value in the lowerScreenValue to the arrayOfExpresion 
+                let tempLowerScreen = this.state.lowerScreenValue.concat(e.target.textContent);
+                
+
+                //let tempArray = state.arrayOfExpresion;
+                //tempArray[state.arrayIndex] = tempLowerScreen;
+            
+                console.log("this.state.lowerScreenValue=", this.state.lowerScreenValue);
+                console.log("tempLowerScreen=", tempLowerScreen);
+                this.setState( (state)=>{
+
+                    return { 
+                        lowerScreenValue: tempLowerScreen,
+                        currentOperand: tempLowerScreen,
+                        countOperators: 0
+                    }; 
+                } );
+
+                }
+
+
+
             } else {
-               // You pressed an operator  
-                console.log("You pressed and operator like +-*/");
-                this.calculateTotal(this.state.firstOperand, e.target.textContent, this.state.lowerScreenValue);
+               // You pressed an operator such as "= / * - +"
+
+               console.log("You pressed and operator like +-*/");
+                // When I press an operator I will increase the array index 
+               // let tempArrayIndex = state.arrayIndex + 1;
+
+                // When I press an operator the first thing I will add
+                // the currentOperand to the arrayOfExpresion
+                
+               let tempOperator = e.target.textContent;
+               let tempArray = this.state.arrayOfExpresion;
+
+
+
+                if ( (this.state.currentOperand !== "=") &&
+                ( this.state.currentOperand !== "+") &&
+                ( this.state.currentOperand !== "-") &&
+                ( this.state.currentOperand  !== "*") &&
+                ( this.state.currentOperand !== "/") ){
+                    if (this.state.countOperators === 0) {
+                    
+                    tempArray.push(  this.state.currentOperand);
+                    }
+
+
+                } 
+
+               if (this.state.countOperators !== 0){
+                   tempArray[ tempArray.length - 1 ] = tempOperator;
+               } else {
+
+                tempArray.push(tempOperator);
+               }
+                
+                
+                console.log("tempArray=", tempArray);
+                console.log("this.state.arrayOfExpresion=", this.state.arrayOfExpresion);
+                //tempArray.push(state.currentOperand);
+                
+                       
+             this.setState ((state)=>{ 
+
                 return { 
                     lowerScreenValue:  e.target.textContent,
-                    lastOperator: e.target.textContent 
-                   }; 
+                    lastOperator: e.target.textContent,
+                    arrayOfExpresion: tempArray,
+                    countOperators: state.countOperators + 1
+                   };
+
+             }  );
+
             }
 
 
@@ -149,7 +217,6 @@ handleLowerDisplay(e){
 
 
             // console.log("state=", state);
-        });
     }
 
 
@@ -162,12 +229,14 @@ handleLowerDisplay(e){
 
 
     calculateTotal (firstOperand, operator, secondOperand){
+        // TODO I need to check of the string has a `.` if so 
+        // then I will parse it as a float not as an integer...
         firstOperand = parseInt(firstOperand);
         secondOperand = parseInt(secondOperand);
         let total = 0;
         
-        console.log("firstOperand=", firstOperand);
-        console.log("secondOperand=", secondOperand);
+       // console.log("firstOperand=", firstOperand);
+        //console.log("secondOperand=", secondOperand);
 
         switch (operator){
             case "+":
@@ -189,12 +258,25 @@ handleLowerDisplay(e){
         }
    
     this.setState ((state)=>{
+       // console.log("total=", total);
     return {
         firstOperand: total
     }
     }  );
 
     }
+
+
+displayTotal(){
+    //console.log("displayTotal called");
+    this.setState((state)=>{
+    return {
+        lowerScreenValue: this.state.firstOperand
+    }
+    });
+}
+
+
 
 
 
@@ -211,7 +293,7 @@ handleLowerDisplay(e){
             <div id="multiply" onClick={this.handleButtonPress}>*</div>
             <div id="subtract" onClick={this.handleButtonPress}>-</div>
             <div id="add" onClick={this.handleButtonPress}>+</div>
-            <div id="equals" onClick={this.handleButtonPress}>=</div>
+            <div id="equals" onClick={this.handleButtonPress }>=</div>
             <div id="seven" onClick={this.handleButtonPress}>7</div>
             <div id="eight" onClick={this.handleButtonPress}>8</div>
             <div id="nine" onClick={this.handleButtonPress}>9</div>
