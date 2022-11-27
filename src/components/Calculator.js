@@ -12,6 +12,8 @@ class Calculator extends React.Component{
             secondOperand: 0,
             lastOperator: null,
             countOperators: 0,
+            countMinus: 0,
+            negativeOperand: false,
             arrayOfExpresion: [],
             arrayIndex: 0
         }; 
@@ -90,16 +92,27 @@ handleLowerDisplay(e){
 
             // This code handles the initial state of zero when the calculator starts
             //  This is the first operand in the series of calculations
-            if (this.state.lowerScreenValue === "0"){
-                this.setState ((state)=>{
-                    return {
-                        lowerScreenValue: e.target.textContent,
-                        currentOperand: e.target.textContent,
-                        countOperators: 0
-                    }
+            if (this.state.lowerScreenValue === "0") {
+                
+                // If I press minus once at the begining of the expresion
+                // then it is a negative number 
+                //
+                    this.setState ((state)=>{
+                        return {
+                            lowerScreenValue: e.target.textContent,
+                            currentOperand: e.target.textContent,
+                            countOperators: 0
+                        }
 
 
-                }  );
+                    }  );
+
+                
+            if (e.target.textContent === "-"){
+                this.setState((state)=>{
+                    return { negativeOperand: true }
+                });
+            }
 
 
             } else if( (e.target.textContent !== "=") &&
@@ -170,30 +183,90 @@ handleLowerDisplay(e){
                let tempArray = this.state.arrayOfExpresion;
 
 
+// When I have `1--2=` I want it to become  ` 1 - -2 = ` 
+// When I have `1*-2=` I want it to become  ` 1 * -2 = ` 
+// When I have `1 /*+-2` I want it to becom ` 1 + -2 = `
+// When I have `1 /+-*2` I want it to becom ` 1 * 2 = `
 
+// How do I do that?
+// If negativeOperand === true 
+	// Then concat `-` to the operand
+	// And the negativeOperand = false
+
+
+// If countOperators >= 1 and pressed `-` at the end
+	// Then negativeOperand = true
+	
+
+
+
+
+//               if (tempOperator === "-"){
+//                   this.setState( (state)=>{ return {countMinus: state.countMinus + 1 } }  );
+//                   console.log("this.state.countMinus:", this.state.countMinus);
+//               }
+//
                 if ( (this.state.currentOperand !== "=") &&
                 ( this.state.currentOperand !== "+") &&
                 ( this.state.currentOperand !== "-") &&
                 ( this.state.currentOperand  !== "*") &&
                 ( this.state.currentOperand !== "/") ){
+                
+                    // Concatenate a "-" sign to the number if negativeOperand is true 
                     if (this.state.countOperators === 0) {
-                    
-                    tempArray.push(  this.state.currentOperand);
+                        if (this.state.negativeOperand ===  true){
+                            console.log("touch1");
+                            tempArray.push( "-" + this.state.currentOperand);
+                            this.setState((state)=>{return {negativeOperand: false}});
+                        } else if (this.state.currentOperand.length !== 0)   {
+                            tempArray.push(  this.state.currentOperand);
+                            console.log("touch3");
+                            // Reset the currentOperand to empty 
+                            this.setState( (state)=>{ return {currentOperand: ""  }  });
+                            // console.log("this.state.currentOperand=", this.state.currentOperand);
+                            //this.setState((state)=>{return {countMinus: 0}});
+                        }
                     }
 
+                } else if ( ( this.state.countOperators !== 0) && (this.state.negativeOperand === true ) ) {
+                    // console.log("touch");
+                    tempArray.push( "-" + this.state.currentOperand);
+                    this.setState((state)=>{return {negativeOperand: false }});
+                    console.log("touch2");
 
-                } 
+                }
 
-               if (this.state.countOperators !== 0){
-                   tempArray[ tempArray.length - 1 ] = tempOperator;
-               } else {
+                // If it is not the first operator
+                // then if the tempOperator != minus
+                //      then overwrite the last operator
+                //      else If previous operator is 
+                // else just add the operator to the arrayOfExpresion 
+                //
 
-                tempArray.push(tempOperator);
-               }
+
+                // If countOperators >= 1 and pressed `-` at the end
+                    // Then negativeOperand = true
+	
+
+                if (this.state.countOperators !== 0){
+                    if (tempOperator === "-") {
+                        this.setState( (state)=>{return {negativeOperand: true} }  );
+                    } else {
+                        tempArray[ tempArray.length - 1 ] = tempOperator;
+                        this.setState( (state)=>{return {negativeOperand: false} }  );
+                    }
+                } else {
+                    // Only push an operator if the countMinus is less or equal 1 
+                    // which means that the minus was pressed once before 
+                    tempArray.push(tempOperator);
+                    console.log("touch4");
+                }
                 
-                
+                // Only count operators if the operators is not "-" spceial character...
+               let tempCountOperators = this.state.countOperators ;
+                    tempCountOperators ++;
+
                 console.log("tempArray=", tempArray);
-                console.log("this.state.arrayOfExpresion=", this.state.arrayOfExpresion);
                 //tempArray.push(state.currentOperand);
                 
                        
@@ -203,7 +276,7 @@ handleLowerDisplay(e){
                     lowerScreenValue:  e.target.textContent,
                     lastOperator: e.target.textContent,
                     arrayOfExpresion: tempArray,
-                    countOperators: state.countOperators + 1
+                    countOperators: tempCountOperators
                    };
 
              }  );
