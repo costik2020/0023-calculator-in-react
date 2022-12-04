@@ -42,7 +42,8 @@ class Calculator extends React.Component{
             countOperators: 0,
             negativeOperand: false,
             arrayOfExpresion: [],
-            arrayIndex: 0
+            arrayIndex: 0,
+            wasTheFloatDotUsed: false
             }
         });
     }
@@ -57,8 +58,10 @@ class Calculator extends React.Component{
         // console.log(e.target.textContent);
 
         // Handle the edge case where multiple dots .. are not alowed in a number
-        if( (e.target.textContent===".") && (this.state.upperScreenValue.indexOf(".") !== -1) ){
+        if(( this.state.wasTheFloatDotUsed === true ) && (e.target.textContent === "."))  {
             this.setState((state)=>{ return state  });
+            // Reset the wasTheFloatDotUsed state variable
+
         } else if (this.state.upperScreenValue === "0"){
 
             // this.setState ((state)=>{ return state }  );
@@ -80,6 +83,7 @@ class Calculator extends React.Component{
 
 
 
+
     handleLowerDisplay(e){
         // this.setState({input: event.target.value}); 
         // console.log("You clicked ",e.target.textContent);
@@ -88,12 +92,16 @@ class Calculator extends React.Component{
         // console.log(e.target.textContent);
 
         // Handle the edge case where multiple dots .. are not alowed in a number
+        
+
+
 
         if( (e.target.textContent === ".") && (this.state.lowerScreenValue.indexOf(".") !== -1) ){
 
             // this.setState ((state)=>{ return state }  ); 
             //console.log("e.target.textContent=", e.target.textContent);
             this.setState ((state)=>{ return state }  );
+
 
         } else  if (this.state.lowerScreenValue === "0") {
          // This code handles the initial state of zero when the calculator starts
@@ -155,6 +163,19 @@ class Calculator extends React.Component{
 
                 // Add the value in the lowerScreenValue to the arrayOfExpresion 
                 let tempLowerScreen = this.state.lowerScreenValue.concat(e.target.textContent);
+                
+                // Check if the character added to the lower string is a "." 
+
+
+                // If the lowerScreenValue has a dot then let know the upperScreenValue that the float dot 
+                // was used by turing wasTheFloatDotUsed to true 
+                if (e.target.textContent === ".") {
+                    this.setState ((state)=>{
+                        return {
+                            wasTheFloatDotUsed: true 
+                        }
+                    });
+                }
 
 
                 //let tempArray = state.arrayOfExpresion;
@@ -184,10 +205,28 @@ class Calculator extends React.Component{
             // When I press an operator the first thing I will add
             // the currentOperand to the arrayOfExpresion
 
+
+            //Reset the wasTheFloatDotUsed in lowerScreenValue flag
+            this.setState((state)=>{
+                return {
+                wasTheFloatDotUsed: false
+                }
+            });
+
+
             let tempOperator = e.target.textContent;
             let tempArray = this.state.arrayOfExpresion;
            // console.log("tempArray=", tempArray);
             console.log("this.state.arrayOfExpresion=", this.state.arrayOfExpresion);
+
+
+            // When an operator is pressed reset the wasTheFloatDotUsed flag back to false 
+            this.setState((state)=>{
+                return {
+                    wasTheFloatDotUsed: false
+                }
+            });
+
 
             // When I have `1--2=` I want it to become  ` 1 - -2 = ` 
             // When I have `1*-2=` I want it to become  ` 1 * -2 = ` 
