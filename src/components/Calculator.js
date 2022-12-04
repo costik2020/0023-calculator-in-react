@@ -186,7 +186,8 @@ class Calculator extends React.Component{
 
             let tempOperator = e.target.textContent;
             let tempArray = this.state.arrayOfExpresion;
-
+           // console.log("tempArray=", tempArray);
+            console.log("this.state.arrayOfExpresion=", this.state.arrayOfExpresion);
 
             // When I have `1--2=` I want it to become  ` 1 - -2 = ` 
             // When I have `1*-2=` I want it to become  ` 1 * -2 = ` 
@@ -253,7 +254,15 @@ class Calculator extends React.Component{
                 if (tempOperator === "-") {
                     this.setState( (state)=>{return {negativeOperand: true} }  );
                 } else {
-                    tempArray[ tempArray.length - 1 ] = tempOperator;
+                    // Always add the last operator pressed to the array 
+                    if (tempArray.length == 1){
+
+                        tempArray.push(tempOperator);
+                    } else {
+
+                        tempArray[ tempArray.length - 1 ] = tempOperator;
+                    }
+                    
                     this.setState( (state)=>{return {negativeOperand: false} }  );
                 }
             } else {
@@ -266,7 +275,7 @@ class Calculator extends React.Component{
             let tempCountOperators = this.state.countOperators ;
             tempCountOperators ++;
             
-            console.log("this.state.upperScreenValue", this.state.upperScreenValue);
+           // console.log("this.state.upperScreenValue", this.state.upperScreenValue);
             console.log("tempArray=", tempArray);
             //tempArray.push(state.currentOperand);
 
@@ -289,6 +298,8 @@ class Calculator extends React.Component{
 
 
 
+     console.log("this.state.upperScreenValue", this.state.upperScreenValue);
+     console.log("this.state.lowerScreenValue", this.state.lowerScreenValue);
 
         // console.log("state=", state);
     }
@@ -441,21 +452,28 @@ class Calculator extends React.Component{
         let totalString = total.toString();
         let tempArrayOfExpresion = [];
         tempArrayOfExpresion.push(totalString);
-        console.log("tempArrayOfExpresion=", tempArrayOfExpresion);
+        //console.log("tempArrayOfExpresion=", tempArrayOfExpresion);
 
         this.setState ((state)=>{ 
             return {
                 upperScreenValue: state.upperScreenValue.concat(totalString),
                 lowerScreenValue: totalString,
-                arrayOfExpresion: tempArrayOfExpresion
+                arrayOfExpresion: [...tempArrayOfExpresion]
             } 
-        }  );
-        this.forceUpdate();
+        }
+            , 
+                    ()=>{
+                
+                console.log("this.state.arrayOfExpresion = ",this.state.arrayOfExpresion );
+            }
+        );
+
+        //this.forceUpdate();
         // TODO REACT DOESN'T UPDATE MY arrayOfExpresion ARRAY AND BECAUSE OF THAT I HAVE A BUNCH OF WEIRD BUGS 
         // I TRYED TO USE this.forceUpdate TO FORCE AN UPDATE
         // BUT REACT IS STUBBERN AS USUAL !!!
 
-    console.log("this.state.arrayOfExpresion = ",this.state.arrayOfExpresion );
+    //console.log("this.state.arrayOfExpresion = ",this.state.arrayOfExpresion );
     }
 
 
