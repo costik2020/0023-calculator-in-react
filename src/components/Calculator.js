@@ -14,7 +14,10 @@ class Calculator extends React.Component{
             countOperators: 0,
             negativeOperand: false,
             arrayOfExpresion: [],
-            arrayIndex: 0
+            arrayIndex: 0,
+            wasTheFloatDotUsed: false,
+            initialization: true
+
         }; 
 
         this.handleButtonPress= this.handleButtonPress.bind(this); 
@@ -43,7 +46,8 @@ class Calculator extends React.Component{
             negativeOperand: false,
             arrayOfExpresion: [],
             arrayIndex: 0,
-            wasTheFloatDotUsed: false
+            wasTheFloatDotUsed: false,
+            initialization: true
             }
         });
     }
@@ -57,12 +61,19 @@ class Calculator extends React.Component{
         //console.log("state=", state);
         // console.log(e.target.textContent);
 
+        // Deal with multiple zeroes "0" or "000" scenaries
+        // Don't allow the user to insert more than one zero 
+        if ((this.state.lowerScreenValue === "0") && (e.target.textContent === "0")){
+            // Do nothing just exit the function 
+            return undefined;
+        }
+
         // Handle the edge case where multiple dots .. are not alowed in a number
         if(( this.state.wasTheFloatDotUsed === true ) && (e.target.textContent === "."))  {
             this.setState((state)=>{ return state  });
             // Reset the wasTheFloatDotUsed state variable
 
-        } else if (this.state.upperScreenValue === "0"){
+        } else if (this.state.initialization === true){
 
             // this.setState ((state)=>{ return state }  );
             this.setState ((state)=>{ return { upperScreenValue: e.target.textContent  } }  );
@@ -103,7 +114,7 @@ class Calculator extends React.Component{
             this.setState ((state)=>{ return state }  );
 
 
-        } else  if (this.state.lowerScreenValue === "0") {
+        } else  if (this.state.initialization === true) {
          // This code handles the initial state of zero when the calculator starts
         //  This is the first operand in the series of calculations
 
@@ -115,7 +126,8 @@ class Calculator extends React.Component{
                 return {
                     lowerScreenValue: e.target.textContent,
                     currentOperand: e.target.textContent,
-                    countOperators: 0
+                    countOperators: 0,
+                    initialization: false
                 }
 
 
@@ -141,6 +153,12 @@ class Calculator extends React.Component{
             // else just concatenate number to the lowerscreen 
             //
 
+            // Deal with multiple zeroes "0" or "000" scenaries
+            // Don't allow the user to insert more than one zero 
+            if ((this.state.lowerScreenValue === "0") && (e.target.textContent === "0")){
+                // Do nothing just exit the function 
+                return undefined;
+            }
 
             if ( (this.state.lowerScreenValue === "=") ||
                 ( this.state.lowerScreenValue === "+") ||
