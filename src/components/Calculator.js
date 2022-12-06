@@ -82,7 +82,16 @@ class Calculator extends React.Component{
             this.setState ((state)=>{ return { upperScreenValue: e.target.textContent  } }  );
 
         } else {
-            if (this.state.wasEqualPressed === "="){
+            if ((this.state.wasEqualPressed === "=") && ( "/*-+".indexOf(e.target.textContent) !== -1 ))            {
+                this.setState((state)=>{
+                    return {
+
+                    upperScreenValue: state.upperScreenValue.concat(e.target.textContent),
+                    wasEqualPressed: "" 
+                    }
+                })
+            } else if ((this.state.wasEqualPressed === "=") && ( ".0123456789".indexOf(e.target.textContent) !== -1 )) {
+
                 this.setState((state)=>{
                     return {
 
@@ -91,7 +100,7 @@ class Calculator extends React.Component{
                     wasEqualPressed: "" 
                     }
                 })
-            } else {
+            }else {
 
                 this.setState ((state)=>{ 
                     return {
@@ -420,7 +429,7 @@ class Calculator extends React.Component{
 
         this.setState((state)=>{return {wasEqualPressed: e.target.textContent }});
 
-        console.log("this.state.wasEqualPressed=", this.state.wasEqualPressed);
+        //console.log("this.state.wasEqualPressed=", this.state.wasEqualPressed);
             this.handleUpperDisplay(e);
             this.handleLowerDisplay(e);
             if (e.target.textContent === "="){
@@ -435,7 +444,11 @@ class Calculator extends React.Component{
 
 
             }
-            console.log("this.state.arrayOfExpresion=",this.state.arrayOfExpresion);
+           console.log("this.state.arrayOfExpresion=",this.state.arrayOfExpresion);
+           console.log("this.state.upperScreenValue=", this.state.upperScreenValue);
+           console.log("this.state.lowerScreenValue=", this.state.lowerScreenValue);
+           console.log("e.target.textContent=", e.target.textContent);
+           console.log("-----------");
         
 
     }
