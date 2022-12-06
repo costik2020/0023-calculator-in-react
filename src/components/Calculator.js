@@ -48,7 +48,7 @@ class Calculator extends React.Component{
             arrayIndex: 0,
             wasTheFloatDotUsed: false,
             initialization: true,
-            wasEqualPressed: false
+            wasEqualPressed: ""
 
 
             }
@@ -82,13 +82,13 @@ class Calculator extends React.Component{
             this.setState ((state)=>{ return { upperScreenValue: e.target.textContent  } }  );
 
         } else {
-            if (this.state.wasEqualPressed === true){
+            if (this.state.wasEqualPressed === "="){
                 this.setState((state)=>{
                     return {
 
                     upperScreenValue: e.target.textContent,
                     arrayOfExpresion: [],
-                    wasEqualPressed: false 
+                    wasEqualPressed: "" 
                     }
                 })
             } else {
@@ -237,12 +237,13 @@ class Calculator extends React.Component{
                 }
 
                 
-                if (this.state.wasEqualPressed === true){
+                if (this.state.wasEqualPressed === "="){
                 this.setState( (state)=>{
                     return { 
                         lowerScreenValue: e.target.textContent,
                         currentOperand: e.target.textContent,
-                        countOperators: 0
+                        countOperators: 0,
+                        wasEqualPressed: ""
                     }; 
                 } );
 
@@ -284,15 +285,7 @@ class Calculator extends React.Component{
             let tempOperator = e.target.textContent;
             let tempArray;
 
-
-            if (this.state.wasEqualPressed === true){
-                tempArray = [];
-                this.setState((state)=>{return {wasEqualPressed: false}});
-
-            } else {
-
-             tempArray = this.state.arrayOfExpresion;
-            }
+            tempArray = this.state.arrayOfExpresion;
            // console.log("tempArray=", tempArray);
            // console.log("this.state.arrayOfExpresion=", this.state.arrayOfExpresion);
 
@@ -425,7 +418,9 @@ class Calculator extends React.Component{
 
     handleButtonPress(e){
 
+        this.setState((state)=>{return {wasEqualPressed: e.target.textContent }});
 
+        console.log("this.state.wasEqualPressed=", this.state.wasEqualPressed);
             this.handleUpperDisplay(e);
             this.handleLowerDisplay(e);
             if (e.target.textContent === "="){
@@ -434,13 +429,12 @@ class Calculator extends React.Component{
                 // Kepp thrack of when the equal is pressed 
                 this.setState( (state)=>{
                     return {
-                        wasEqualPressed: true
+                        wasEqualPressed: "="
                     }
                 });
 
 
             }
-
             console.log("this.state.arrayOfExpresion=",this.state.arrayOfExpresion);
         
 
