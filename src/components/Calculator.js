@@ -47,7 +47,10 @@ class Calculator extends React.Component{
             arrayOfExpresion: [],
             arrayIndex: 0,
             wasTheFloatDotUsed: false,
-            initialization: true
+            initialization: true,
+            wasEqualPressed: false
+
+
             }
         });
     }
@@ -102,11 +105,26 @@ class Calculator extends React.Component{
         //console.log("state=", state);
         // console.log(e.target.textContent);
 
-        // Handle the edge case where multiple dots .. are not alowed in a number
         
+        // Reset the lowerScreenValue if user inputs numbers just after a calculation
+       // console.log("---");
+       // console.log("e.target.textContent=", e.target.textContent);
+       // if ( (".0123456789".indexOf(e.target.textContent) !== -1 ) && (this.state.wasEqualPressed === true) ){
+       //     // Then it meas that the user just started pressing numbers after a calculation was made 
+       //     // Reset the lowerScreenValue 
+       //    console.log("touch"); 
+       //     this.setState((state)=>{
+       //         return {
+       //             lowerScreenValue: "foo",
+       //             wasEqualPressed: false
+       //         }
+       //     });
 
+       //     this.forceUpdate();
 
+       // }
 
+        // Handle the edge case where multiple dots .. are not alowed in a number
         if( (e.target.textContent === ".") && (this.state.lowerScreenValue.indexOf(".") !== -1) ){
 
             // this.setState ((state)=>{ return state }  ); 
@@ -152,7 +170,20 @@ class Calculator extends React.Component{
             // then overwrite it 
             // else just concatenate number to the lowerscreen 
             //
-
+            
+            // If the equal was pressed before that means a calculation was made 
+            // Therefore reset the lowerScreenValue to an empty string 
+          /*
+            if (this.state.wasEqualPressed === true){
+                this.setState((state)=>{
+                    console.log("touch it");
+                    return { 
+                    lowerScreenValue: "foo",
+                    wasEqualPressed: false
+                    }
+                });
+            }
+        */
             // Deal with multiple zeroes "0" or "000" scenaries
             // Don't allow the user to insert more than one zero 
             if ((this.state.lowerScreenValue === "0") && (e.target.textContent === "0")){
@@ -179,8 +210,7 @@ class Calculator extends React.Component{
 
 
 
-                // Add the value in the lowerScreenValue to the arrayOfExpresion 
-                let tempLowerScreen = this.state.lowerScreenValue.concat(e.target.textContent);
+            
                 
                 // Check if the character added to the lower string is a "." 
 
@@ -195,19 +225,27 @@ class Calculator extends React.Component{
                     });
                 }
 
-
-                //let tempArray = state.arrayOfExpresion;
-                //tempArray[state.arrayIndex] = tempLowerScreen;
-
-                //console.log("this.state.lowerScreenValue=", this.state.lowerScreenValue);
-               // console.log("tempLowerScreen=", tempLowerScreen);
+                
+                if (this.state.wasEqualPressed === true){
                 this.setState( (state)=>{
                     return { 
-                        lowerScreenValue: tempLowerScreen,
-                        currentOperand: tempLowerScreen,
+                        lowerScreenValue: e.target.textContent,
+                        currentOperand: e.target.textContent,
                         countOperators: 0
                     }; 
                 } );
+
+                }else {
+                this.setState( (state)=>{
+                    return { 
+                        lowerScreenValue: this.state.lowerScreenValue.concat(e.target.textContent),
+                        currentOperand: this.state.lowerScreenValue.concat(e.target.textContent),
+                        countOperators: 0
+                    }; 
+                } );
+
+                }
+
 
             }
 
@@ -235,7 +273,7 @@ class Calculator extends React.Component{
             let tempOperator = e.target.textContent;
             let tempArray = this.state.arrayOfExpresion;
            // console.log("tempArray=", tempArray);
-            console.log("this.state.arrayOfExpresion=", this.state.arrayOfExpresion);
+           // console.log("this.state.arrayOfExpresion=", this.state.arrayOfExpresion);
 
 
             // When an operator is pressed reset the wasTheFloatDotUsed flag back to false 
@@ -333,7 +371,7 @@ class Calculator extends React.Component{
             tempCountOperators ++;
             
            // console.log("this.state.upperScreenValue", this.state.upperScreenValue);
-            console.log("tempArray=", tempArray);
+           // console.log("tempArray=", tempArray);
             //tempArray.push(state.currentOperand);
 
 
@@ -355,8 +393,8 @@ class Calculator extends React.Component{
 
 
 
-     console.log("this.state.upperScreenValue", this.state.upperScreenValue);
-     console.log("this.state.lowerScreenValue", this.state.lowerScreenValue);
+     // console.log("this.state.upperScreenValue", this.state.upperScreenValue);
+     // console.log("this.state.lowerScreenValue", this.state.lowerScreenValue);
 
         // console.log("state=", state);
     }
@@ -365,11 +403,26 @@ class Calculator extends React.Component{
 
 
     handleButtonPress(e){
-        this.handleUpperDisplay(e);
-        this.handleLowerDisplay(e);
-        if (e.target.textContent === "="){
-            this.handleCalculateTotal();
-        }
+
+
+            this.handleUpperDisplay(e);
+            this.handleLowerDisplay(e);
+            if (e.target.textContent === "="){
+                this.handleCalculateTotal();
+
+                // Kepp thrack of when the equal is pressed 
+                this.setState( (state)=>{
+                    return {
+                        wasEqualPressed: true
+                    }
+                });
+
+
+            }
+
+            console.log("this.state.arrayOfExpresion=",this.state.arrayOfExpresion);
+        
+
     }
 
 
@@ -505,7 +558,7 @@ class Calculator extends React.Component{
         } 
 
         // Print the total
-        console.log("total=", total);
+       // console.log("total=", total);
         let totalString = total.toString();
         let tempArrayOfExpresion = [];
         tempArrayOfExpresion.push(totalString);
@@ -521,7 +574,7 @@ class Calculator extends React.Component{
             , 
                     ()=>{
                 
-                console.log("this.state.arrayOfExpresion = ",this.state.arrayOfExpresion );
+               // console.log("this.state.arrayOfExpresion = ",this.state.arrayOfExpresion );
             }
         );
 
