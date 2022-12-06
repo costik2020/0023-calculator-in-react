@@ -82,12 +82,23 @@ class Calculator extends React.Component{
             this.setState ((state)=>{ return { upperScreenValue: e.target.textContent  } }  );
 
         } else {
+            if (this.state.wasEqualPressed === true){
+                this.setState((state)=>{
+                    return {
 
-            this.setState ((state)=>{ 
-                return {
-                    upperScreenValue: state.upperScreenValue.concat(e.target.textContent),
-                } 
-            }  );
+                    upperScreenValue: e.target.textContent,
+                    arrayOfExpresion: [],
+                    wasEqualPressed: false 
+                    }
+                })
+            } else {
+
+                this.setState ((state)=>{ 
+                    return {
+                        upperScreenValue: state.upperScreenValue.concat(e.target.textContent),
+                    } 
+                }  );
+            }
 
         }
 
@@ -271,7 +282,17 @@ class Calculator extends React.Component{
 
 
             let tempOperator = e.target.textContent;
-            let tempArray = this.state.arrayOfExpresion;
+            let tempArray;
+
+
+            if (this.state.wasEqualPressed === true){
+                tempArray = [];
+                this.setState((state)=>{return {wasEqualPressed: false}});
+
+            } else {
+
+             tempArray = this.state.arrayOfExpresion;
+            }
            // console.log("tempArray=", tempArray);
            // console.log("this.state.arrayOfExpresion=", this.state.arrayOfExpresion);
 
